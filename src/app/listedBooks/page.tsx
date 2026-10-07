@@ -7,10 +7,12 @@ import { BooksContext } from "@/context/BookContext";
 import type { Book } from "@/types/book";
 
 type BookList = "read" | "wishlist";
+type SortOption = "rating" | "pages" | "year";
 
 const ListedBooksPage = () => {
   const booksContext = useContext(BooksContext);
   const [activeList, setActiveList] = useState<BookList>("read");
+  const [sortBy, setSortBy] = useState<SortOption>("rating");
 
   if (!booksContext) {
     throw new Error("ListedBooksPage must be used within a BooksProvider");
@@ -18,6 +20,16 @@ const ListedBooksPage = () => {
 
   const { readBooks, wishlist } = booksContext;
   const activeBooks = activeList === "read" ? readBooks : wishlist;
+  const sortedBooks = [...activeBooks].sort((first, second) => {
+    switch (sortBy) {
+      case "rating":
+        return second.rating - first.rating;
+      case "pages":
+        return second.totalPages - first.totalPages;
+      case "year":
+        return second.yearOfPublishing - first.yearOfPublishing;
+    }
+  });
   const listLabel = activeList === "read" ? "Read books" : "Wishlist";
 
   return (
@@ -70,7 +82,26 @@ const ListedBooksPage = () => {
                 Your collection
               </h2>
             </div>
-
+            <div className="w-full sm:w-auto">
+              <label
+                htmlFor="book-sort"
+                className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-indigo-600"
+              >
+                Sort by
+              </label>
+              <select
+                id="book-sort"
+                value={sortBy}
+                onChange={(event) =>
+                  setSortBy(event.currentTarget.value as SortOption)
+                }
+                className="w-full rounded-xl border border-indigo-200 bg-white px-4 py-3 text-sm font-semibold text-indigo-950 shadow-sm outline-none transition hover:border-violet-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:w-auto"
+              >
+                <option value="rating">Highest rating</option>
+                <option value="pages">Most pages</option>
+                <option value="year">Newest publication</option>
+              </select>
+            </div>
             <div
               className="inline-flex w-fit rounded-full border border-indigo-100 bg-white p-1.5 shadow-sm"
               aria-label="Choose a book list"
@@ -123,14 +154,13 @@ const ListedBooksPage = () => {
           <div className="mt-6 flex items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-slate-700">{listLabel}</h3>
             <p className="text-sm text-slate-500">
-              {activeBooks.length}{" "}
-              {activeBooks.length === 1 ? "book" : "books"}
+              {activeBooks.length} {activeBooks.length === 1 ? "book" : "books"}
             </p>
           </div>
 
           {activeBooks.length > 0 ? (
             <ul className="mt-4 flex flex-col gap-4" aria-live="polite">
-              {activeBooks.map((book: Book) => (
+              {sortedBooks.map((book: Book) => (
                 <li key={book.bookId}>
                   <article className="group flex flex-col gap-5 rounded-3xl border border-indigo-100 border-l-4 border-l-indigo-400 bg-linear-to-br from-white via-white to-indigo-50/70 p-4 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-violet-200 hover:border-l-violet-500 hover:shadow-xl hover:shadow-indigo-950/10 sm:flex-row sm:gap-6 sm:p-5">
                     <div className="relative flex h-80 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br from-slate-100 via-indigo-50 to-violet-100 p-5 sm:h-72 sm:w-56 sm:p-6">

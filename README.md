@@ -18,6 +18,15 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Book data
+
+The homepage and `/books` page load book data from `public/booksData.json` using
+the shared `src/hooks/useBooksData.ts` hook. Set `NEXT_PUBLIC_BASE_URL` in `.env`
+to the base URL serving this app (for example, `http://localhost:3000`). Copy
+`.env.example` to `.env` to get started, then restart the development server.
+Book detail pages use the same JSON file directly to generate static routes and
+metadata.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

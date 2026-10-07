@@ -1,7 +1,30 @@
-import books from "../../../public/booksData.json";
+"use client";
+
 import BookCard from "@/components/shared/BookCard";
+import useBooksData from "@/hooks/useBooksData";
 
 const Books = () => {
+  const { books, loading, error } = useBooksData();
+
+  if (loading) {
+    return (
+      <section className="container mx-auto px-4 py-16 sm:py-20" role="status">
+        <p className="text-sm font-medium text-indigo-700">Loading books...</p>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="container mx-auto px-4 py-16 sm:py-20" role="alert">
+        <h2 className="text-xl font-bold text-slate-900">
+          Unable to load books
+        </h2>
+        <p className="mt-2 text-sm text-slate-600">{error}</p>
+      </section>
+    );
+  }
+
   return (
     <section className="container mx-auto px-4 py-16 sm:py-20">
       <div className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
